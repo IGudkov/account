@@ -11,12 +11,11 @@ import java.lang.reflect.InvocationTargetException;
 
 public class TestsAccountsPart3Save {
   @Test
-  public void saveUndo() throws IllegalAccessException, InvocationTargetException {
+  public void saveUndo() {
 
     Account account = new Account("Владимир");
 
-    AccountSave accountSaveOriginal = new AccountSave(account.getClientName(), account.getCurrencyCount(), account.getStackUndo());
-    Account accountOriginal = new Account(accountSaveOriginal.getClientName(), accountSaveOriginal.getCurrencyCount(), accountSaveOriginal.getStackUndo());
+    AccountSave accountSaveOriginal = new AccountSave(account.getClientName(), account.getCurrencyCount());
 
     account.setClientName("Александр");
 
@@ -25,23 +24,20 @@ public class TestsAccountsPart3Save {
     account.changeCurrencyCount(ECurrency.USD, 3000);
     account.changeCurrencyCount(ECurrency.CNY, 4000);
 
-    AccountSave accountSave = new AccountSave(account.getClientName(), account.getCurrencyCount(), account.getStackUndo());
-
     account.changeCurrencyCount(ECurrency.RUB, 1001);
     account.changeCurrencyCount(ECurrency.EUR, 2001);
     account.changeCurrencyCount(ECurrency.USD, 3001);
     account.changeCurrencyCount(ECurrency.CNY, 4001);
 
-    account = new Account(accountSave.getClientName(), accountSave.getCurrencyCount(), accountSave.getStackUndo());
-
     while (account.checkUndo()) {
       account.undo();
     }
 
-    Account finalAccount = account;
-    Assertions.assertAll("Проверка отката объекта в точку сохранения и дальнейшего отката в первоначальное состояние",
-        () -> Assertions.assertEquals(finalAccount.getClientName(), accountOriginal.getClientName(), "имя владельца не совпадает"),
-        () -> Assertions.assertArrayEquals(finalAccount.getCurrencyCount().values().toArray(), accountOriginal.getCurrencyCount().values().toArray(), "пары валюта-количество не совпадают")
+    Account accountOriginal = new Account(accountSaveOriginal.getClientName(), accountSaveOriginal.getCurrencyCount());
+
+    Assertions.assertAll("Проверка отката объекта в точку сохранения",
+        () -> Assertions.assertEquals(account.getClientName(), accountOriginal.getClientName(), "имя владельца не совпадает"),
+        () -> Assertions.assertArrayEquals(account.getCurrencyCount().values().toArray(), accountOriginal.getCurrencyCount().values().toArray(), "пары валюта-количество не совпадают")
     );
   }
 }

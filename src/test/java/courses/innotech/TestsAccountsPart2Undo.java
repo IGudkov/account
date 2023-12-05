@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class TestsAccountsPart2Undo {
   @Test
-  public void undoThrows() throws InvocationTargetException, IllegalAccessException {
+  public void undoThrows() {
 
     Account account = new Account("Владимир");
 
@@ -38,10 +38,8 @@ public class TestsAccountsPart2Undo {
   @Test
   public void undoNotThrows() throws IllegalAccessException, InvocationTargetException {
 
+    String firstName = "Владимир";
     Account account = new Account("Владимир");
-
-    AccountSave accountSave = new AccountSave(account.getClientName(), account.getCurrencyCount(), account.getStackUndo());
-    Account accountOriginal = new Account(accountSave.getClientName(), accountSave.getCurrencyCount(), accountSave.getStackUndo());
 
     account.setClientName("Александр");
 
@@ -59,10 +57,10 @@ public class TestsAccountsPart2Undo {
       account.undo();
     }
 
+    System.out.println(account.getCurrencyCount().values().toArray().length);
     Assertions.assertAll("Проверка отката объекта в первоначальное состояние",
-        () -> Assertions.assertEquals(account.getClientName(), accountOriginal.getClientName(), "имя владельца не совпадает"),
-        () -> Assertions.assertArrayEquals(account.getCurrencyCount().values().toArray(), accountOriginal.getCurrencyCount().values().toArray(), "пары валюта-количество не совпадают")
+        () -> Assertions.assertEquals(account.getClientName(), firstName, "имя владельца не совпадает"),
+        () -> Assertions.assertTrue(account.getCurrencyCount().values().toArray().length == 0, "количество записей в массиве валюта-количество не равно 0")
     );
-
   }
 }

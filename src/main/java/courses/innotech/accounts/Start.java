@@ -8,7 +8,7 @@ import courses.innotech.currencies.ECurrency;
 import java.lang.reflect.InvocationTargetException;
 
 public class Start {
-  public static void main(String[] args) throws IllegalAccessException, InvocationTargetException {
+  public static void main(String[] args) {
 
     System.out.println("\n"+"Создание объекта:");
     Account account = new Account("Владимир");
@@ -27,7 +27,7 @@ public class Start {
     account.changeCurrencyCount(ECurrency.CNY, 4000);
     System.out.println(account);
 
-    AccountSave accountSave = new AccountSave(account.getClientName(), account.getCurrencyCount(), account.getStackUndo());
+    AccountSave accountSave = new AccountSave(account.getClientName(), account.getCurrencyCount());
     System.out.println("\n"+"Сохранение состояния объекта:");
     System.out.println(accountSave);
 
@@ -41,14 +41,14 @@ public class Start {
     account.changeCurrencyCount(ECurrency.CNY, 4001);
     System.out.println(account);
 
-    account = new Account(accountSave.getClientName(), accountSave.getCurrencyCount(), accountSave.getStackUndo());
-    System.out.println("\n"+"Восстановление состояния объекта:");
-    System.out.println(account);
-
     System.out.println("\n"+"Откат изменений объекта:");
     while (account.checkUndo()) {
       account.undo();
       System.out.println(account);
     }
+
+    Account accountRestore = new Account(accountSave.getClientName(), accountSave.getCurrencyCount());
+    System.out.println("\n"+"Восстановление состояния объекта:");
+    System.out.println(accountRestore);
   }
 }
